@@ -22,11 +22,41 @@ def save_history(entry):
 load_dotenv()
 
 API_Key = os.getenv("OPENWEATHER_API_KEY")
-city = input("Enter city name :")
+
+history = load_history()
+
+if history:
+    print(f"Last searched city: {history[0]['city']}")
+    
+city = input("Enter city name : ")
+
+if city.lower() == "history":
+    history = load_history()
+
+    if not history:
+        print("No search history found.")
+    else:
+        print("\nLast 5 Searches:\n")
+
+        for entry in history:
+            print(
+                f"{entry['city']} | "
+                f"{entry['temp']}°C | "
+                f"{entry['humidity']}% Humidity | "
+                f"{entry['condition']} | "
+                f"AQI {entry['aqi']}"
+            )
+
+    exit()
+
 url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_Key}&units=metric"
 
 response = requests.get(url)
 data = response.json()
+
+if response.status_code != 200:
+    print("Invalid city name.")
+    exit()
 
 temp = data["main"]["temp"]
 feels_like = data["main"]["feels_like"]
