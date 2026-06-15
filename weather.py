@@ -22,3 +22,33 @@ print(f"Temperature  : {temp}°C (Feels like {feels_like}°C)")
 print(f"Humidity     : {humidity}%")
 print(f"Wind Speed   : {wind_speed} km/h")
 print(f"Condition    : {condition}")
+
+lat = data["coord"]["lat"]
+lon = data["coord"]["lon"]
+
+aqi_url = f"https://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_Key}"
+
+aqi_response = requests.get(aqi_url)
+aqi_data = aqi_response.json()
+
+aqi = aqi_data["list"][0]["main"]["aqi"]
+
+aqi_levels = {
+    1: "Good",
+    2: "Fair", 
+    3: "Moderate",
+    4: "Poor",
+    5: "Very Poor"
+}
+
+print(f"Air Quality  : {aqi} — {aqi_levels[aqi]}")
+
+aqi_advisory = {
+    1: "Air quality is satisfactory.",
+    2: "Acceptable air quality.",
+    3: "Sensitive individuals should reduce outdoor activity.",
+    4: "Everyone may experience health effects.",
+    5: "Avoid outdoor activity."
+}
+
+print(f"Advisory     : {aqi_advisory[aqi]}")
