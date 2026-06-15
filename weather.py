@@ -1,6 +1,23 @@
 import requests
 import os
+import json
 from dotenv import load_dotenv
+
+HISTORY_FILE = "weather_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r") as f:
+            return json.load(f)
+    return []
+
+def save_history(entry):
+    history = load_history()
+    history = [h for h in history if h["city"] != entry["city"]]
+    history.insert(0, entry)
+    history = history[:5]
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
 
 load_dotenv()
 
@@ -52,3 +69,12 @@ aqi_advisory = {
 }
 
 print(f"Advisory     : {aqi_advisory[aqi]}")
+
+entry = {
+    "city": city,
+    "temp": temp,
+    "humidity": humidity,
+    "condition": condition,
+    "aqi": aqi
+}
+save_history(entry)
